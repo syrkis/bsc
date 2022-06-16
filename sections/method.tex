@@ -5,9 +5,13 @@ Countries present in less than three rounds were included in the training set. T
 ensure the applicability of the model on countries not seen before.
 
 \subsection*{Preprocessing}
+The experiment, being multilingual, neceitates a language agnostic representation of each article, to be able to answer the question: \emph{given no knowledge of language or location at all, what kind of culture does this daily top 1,000 article matrix come from?}
+To achive this language agnostic summary representation the raw text was, after basic tokenization, converted projectd onto MUSE word embedding space.
 Samples are constructed on demand by from the two sources above.
-The text is tokenized using BPEmb, and the tokens are further converted into multilingual embeddigns.
 An iterator is then constructed outputting a tuple $(x_i, w_i, y_i)$.
+
+\subsubsection*{Efficiency considerations}
+As the average article are present in an average of 29 different dates, article storage utilization was cut by constructing daily sampels on the fly.
 
 \subsection*{Model architecture}
 The experiment attempts to predict the mean and variance of five factors of ESS human value survey responses grouped by round and country from the wikipedia REeading activity within the associaed project.
