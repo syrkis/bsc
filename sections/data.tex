@@ -1,17 +1,17 @@
-The experiment, which entailed the supervised training of a neural model,
-relied on samples constructed from three distinct data sources:
-\emph{1)} the titles and view count of the daily top 1,000 most visited Wikipedia pages for various Wikipedia projects, representing the population reading activity within each projects's associated country,
-\emph{2)} the summary text (the brief text above the table of contents on Wikipedia articles) for each used article, and
-\emph{3)} the bi-yearly Euopean Social Survey (ESS) responses from each Wikipedia  countries, representing cultural values.
-Thus the country-languaug on which the experiment was performed was limited to those for which ESS Data was avaialbe and for which there existsed a more or less uniquely associated Wikipeida Project, resulting in the 23 country-language pairs seen in Appendix Blah blah.
-% TODO: reference that site you found
+The experiment, which entailed the supervised (predicting \emph{y} from \emph{x}) training of a neural model, relied on samples constructed \footnote{the files from which the samples are constructed are avilable for download at \url{data.bsc.syrkis.com}} from four distinct data sources:
+\emph{1)} Titles and view count of the daily top 1,000 most visited Wikipedia pages for various Wikipedia projects, representing the population reading activity within each project's associated country.
+\emph{2)} Summary text (the brief text above the table of contents) for every Wikipedia article.
+\emph{3)} Bi-yearly European Social Survey (ESS) responses from each Wikipedia countries, representing cultural values.
+\emph{4)} Multilingual MUSE word embeddings allowing article summaries to be represented in a language agnostically.
 
-\subsection*{Population reading activity}
-Population reading activity serves as the $X$ of out training data.
+Wikipedia thus serves as the basis for \emph{x} while ESS serves as basis for \emph{y}. Only country-language pairs with both ESS \emph{and} Wikipedia data were included in the experiment.
 
-\subsection*{\emph{Wikipedia views}}
-The Wikimedia REST API\footnote{\url{https://wikimedia.org/api/rest_v1}} provides public access to the daily top
-1,000 most visited Wikipedia pages for every Wikipedia project since July 1st 2015. So as to match up with the avilable ESS data, each of the 23 projects was queried for the date range July 1st 2015 to December 31st 2019 (1,645 days, yileding 37,835 distinct daily snapeshort when multiplying by the 23 languages in question). Meta data was elimated, and each date for each project thus consisted of a list of article name and view count pairs:
+Data was available and for which there existed a more or less uniquely associated Wikipedia Project, resulting in the 23 country-language pairs seen in Appendix Blah blah.
+
+\subsubsection*{Wikipedia}
+
+Ser
+The Wikimedia REST API provides public access to the daily top 1,000 most visited Wikipedia pages for every Wikipedia project. The allows querying from July 1st 2015 onwards. To match up with the available ESS data, each of the 23 projects was queried for the date range July 1st 2015 to December 31st 2019 (1,645 days, yielding 37,835 distinct daily snapshots when multiplying by the 23 languages in question). Metadata was eliminated, and each date for each project thus consisted of a list of article names and view count pairs:
 
 \begin{verbatim}
 [
@@ -24,22 +24,25 @@ The Wikimedia REST API\footnote{\url{https://wikimedia.org/api/rest_v1}} provide
 
 
 \subsubsection*{\emph{Wikipedia texts}}
-For each article that was in the daily top 1,000 and any point in the data range in question for any of the 23 projects, the summary was scraped and store for later on the fly sample construction. The scrape was conducted between April 20th and April 23rd of 2022, and resulted in 1,311,954 unique summaries.
-The articles here in are thus, on average, present about 29 different days.
-As is the case with such phenomena, the view count follows a power law distribution with a coeficient of $\alpha = blah$, with certain articles being present all days within specific projects (the Danish article on Barack Obama was in the top 1,000 evey day in focus).
-Note that as Wikipedia articles are continuously edited, meaning that the scraped April 2022 should be expected to deviate from the what the text was when the article was read. One of the assumption of this paper, is that this deviation is insubstantial.
+For each article that was in the daily top 1,000 and any point in the data range in question for any of the 23 projects, the summary was scraped and stored for later on the fly sample construction. The scrape was conducted between April 20th and April 23rd of 2022 and resulted in 1,311,954 unique summaries.
+The articles herein are thus, on average, present on about 29 different days.
+As is the case with such phenomena, the view count follows a power-law distribution with a coefficient of $\alpha = blah$, with certain articles being present all days within specific projects (the Danish article on Barack Obama was in the top 1,000 every day in focus).
+Note that Wikipedia articles are continuously edited, meaning that the scraped April 2022 should be expected to deviate from what the text was when the article was read. One of the assumptions of this paper is that this deviation is insubstantial.
+
+\subsubsection*{\emph{MUSE Embeddings}}
+MUSE embeddings with a dimensionality of 300 were used to ensure numerica;l similarit between text of similar meaning in different languages. As different word ordering differs between languages, word order was disregarded, and each summary was represented as the mean of it's consituting word embeddings. Stop words were not disregarded (NOAH you should do this).
 
 \subsection*{Cultural values}
-Predicting the summary statistics of survey responese to human values question $y$ is the target.
+Predicting the summary statistics of survey response to human values question $y$ is the target.
 
 \subsubsection*{\emph{European Social Survey}}
-The Euopean Social Survey\footnote{\url{https://ess-search.nsd.no/en}} (ESS) is a survey of the social and cultural values of European countries. 10 rounds have been conducted, foc used on every even year between 2002 and 2020. As the described above Wikipedia project view count data only goes back to July 1st 2015. The ESS data included were thus limited to rounds 7 (2014-2015), 8(2016-2017) and 9(2018-2019).
+The European Social Survey\footnote{\url{https://ess-search.nsd.no/en}} (ESS) is a survey of the social and cultural values of European countries. 10 rounds have been conducted, focused on every even year between 2002 and 2020. As described above Wikipedia project view count data only goes back to July 1st 2015. The ESS data included were thus limited to rounds 7 (2014-2015), 8(2016-2017) and 9(2018-2019).
 
-he Wikipedia (Wiki) data consists of daily lists of summaries of the most viewed articles for each of the 23 Wikipedia Projects, from July 1st 2015 to December 31st 2019.
-This ammounts to 1,645 days times 23 countries yileding 37,835 examples of daily Wikipedia activity.
-The summaries of these articles serves as input $X$ for the model, while a vector $W$ representing how many times a given article was read represents serves as another input.
+The Wikipedia (Wiki) data consists of daily lists of summaries of the most viewed articles for each of the 23 Wikipedia Projects, from July 1st 2015 to December 31st 2019.
+This amounts to 1,645 days times 23 countries yielding 37,835 examples of daily Wikipedia activity.
+The summaries of these articles serve as input $X$ for the model, while a vector $W$ representing how many times a given article was read represents serves as another input.
 
-The data and an assocaited data statement is available at \href{https://data.bsc.syrkis.com}{\texttt{data.bsc.syrkis.com}}.
+The data and an associated data statement are available at \href{https://data.bsc.syrkis.com}{\texttt{data.bsc.syrkis.com}}.
 
-The European Social Survey (ESS) is a survey conducted in various European countries every second year from 2000 (round 1) to 2018 (round 9). It is conducted in person and consits of hundreds country agnostic and country specific questions. This exerpiment uses rounds 7, 8 and 9, as these overlap with the avaiable Wikipedia data.
-Only questions asked in all countries were comnsidered for inclusion. A list of includefed questions can be seen in Appendix  \ref{appendix:data}
+The European Social Survey (ESS) is a survey conducted in various European countries every second year from 2000 (round 1) to 2018 (round 9). It is conducted in person and consists of hundreds of country agnostic and country-specific questions. This experiment uses rounds 7, 8 and 9, as these overlap with the available Wikipedia data.
+Only questions asked in all countries were considered for inclusion. A list of included questions can be seen in Appendix  \ref{appendix:data}
